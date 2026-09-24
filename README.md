@@ -199,6 +199,45 @@ Shared helpers live in [`escrow/src/test.rs`](escrow/src/test.rs). Each test
 creates its own fresh `Env` so feature modules do not rely on hidden
 cross-test state.
 
+### Snapshot regression tests
+
+[`escrow/tests/snapshots.rs`](escrow/tests/snapshots.rs) contains snapshot tests
+that verify contract state structure and transitions using the `insta` crate.
+These tests compare serialized contract state against stored `.snap` files
+committed to the repository.
+
+**When snapshot files update:**
+
+Snapshot files are automatically committed to the repository when the escrow
+contract's `InvoiceEscrow` struct layout changes (new fields, field type changes,
+etc.). This ensures the repository history tracks state structure evolution
+alongside WASM deployments.
+
+**To update snapshots locally:**
+
+```bash
+# Run snapshot tests and accept all changes
+cargo insta test --review
+```
+
+Alternatively, use the non-interactive accept mode:
+
+```bash
+# Run snapshot tests with auto-accept (writes new .snap files)
+INSTA_FORCE_ACCEPT=true cargo test --test snapshots
+```
+
+Then commit the updated `.snap` files to git.
+
+**CI verification:**
+
+The CI pipeline runs snapshot tests with `INSTA_FORCE_ACCEPT=false` (the default),
+which causes the build to fail if:
+- A snapshot test produces output that differs from the committed `.snap` file.
+- A new `.snap` file was created but not committed to git.
+
+This prevents stale or uncommitted snapshots from masking accidental state structure changes.
+
 ---
 
 ## Architecture Decision Records
