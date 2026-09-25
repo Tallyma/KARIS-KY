@@ -238,4 +238,9 @@ cargo clippy --all-targets -- -D warnings
 | `append_attestation_digest` | Admin appends to bounded audit log. |
 | `record_sme_collateral_commitment` | SME records 
 
-/* … truncated 11178 chars — edit only what you need near the top … */
+MIT
+
+## Handsoff notes
+
+<!-- handsoff-issue-608 -->
+- #608: Issue 120: Add property test: `export_state` + `import_state` is identity
